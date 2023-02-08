@@ -1,5 +1,4 @@
 import random
-import pydot
 
 random.seed(42)
 
@@ -24,8 +23,6 @@ class Graphe:
     delta = sorted(degres.values(), reverse=True)[0]
     return delta
 
-  def viz(self):
-    print('À faire')
 
 def gen_graphe(nbr_sommets=2, max_aretes=1):
   g = Graphe(nbr_sommets)

@@ -108,16 +108,16 @@ if __name__ == '__main__':
     'Lime', 'Grey', 'Green', 'Gold', 'Dark', 'Cyan', 'Cyan', 'Chocolate'
   ]
 
-  # On génére aléatoirement un graphe
-  g = gen_graphe(15, 40)
+  # On génére aléatoirement un graphe de 3 sommets et 10 arêtes maximum (le nombre d'arêtes final sera <= 10)
+  g = gen_graphe(3, 10)
 
   print('Liste d\'adjacence du graphe :', g, sep='\n')
 
   res_glouton = coloriage_glouton(g, couleurs)
   print('Résulat de l\'algorithme glouton :', res_glouton, sep='\n')
 
-  res_recuit = coloriage_recuit_simule(g, res_glouton, couleurs, 100)
-  print('Résulat du recuit simulé :', res_recuit, sep='\n')
+  res_recuit = coloriage_recuit_simule(g, res_glouton, couleurs, 100, iter_max=2)
+  print('Résulat du recuit simulé après 2 itérations :', res_recuit, sep='\n')
 
   print('L\'agorithme glouton a utilisé', cout(res_glouton), 'couleurs.\n'
         'Le recuit simulé a utilisé', cout(res_recuit), 'couleurs.')
