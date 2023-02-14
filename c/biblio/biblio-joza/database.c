@@ -72,7 +72,7 @@ void ajouter_livres_mysql(livre* livres, int nb_livres, MYSQL* mysql_conn) {
     mysql_free_result(result);
 }
 
-Cette fonction prend en paramètres le tableau "livres", sa taille "nb_livres" et une connexion MySQL "mysql_conn". Elle insère chaque livre dans la table "livres" et affiche les livres ajoutés. Notez que cette fonction nécessite la bibliothèque MySQL : #include <mysql/mysql.h>.
+//Cette fonction prend en paramètres le tableau "livres", sa taille "nb_livres" et une connexion MySQL "mysql_conn". Elle insère chaque livre dans la table "livres" et affiche les livres ajoutés. Notez que cette fonction nécessite la bibliothèque MySQL : #include <mysql/mysql.h>.
 
-Il est important de noter que cette fonction ne gère pas les erreurs de connexion à la base de données ou d'insertion de données. Il est donc important de prendre en compte ces cas d'erreur pour une utilisation en production.
+//Il est important de noter que cette fonction ne gère pas les erreurs de connexion à la base de données ou d'insertion de données. Il est donc important de prendre en compte ces cas d'erreur pour une utilisation en production.
 
