@@ -42,3 +42,37 @@ void ajouter_adherents_mysql(adherent *adherents, int nb_adherents, MYSQL *con)
         }
     }
 }
+
+void ajouter_livres_mysql(livre* livres, int nb_livres, MYSQL* mysql_conn) {
+    char query[200];
+    MYSQL_RES *result;
+    MYSQL_ROW row;
+
+    // Boucle pour insérer chaque livre dans la table
+    for (int i = 0; i < nb_livres; i++) {
+        // Construction de la requête SQL
+        sprintf(query, "INSERT INTO livres (titre, auteur, annee_publication, disponible) VALUES ('%s', '%s', %d, %d)",
+                livres[i].titre, livres[i].auteur, livres[i].annee_publication, livres[i].disponible);
+
+        // Exécution de la requête
+        if (mysql_query(mysql_conn, query)) {
+            fprintf(stderr, "%s\n", mysql_error(mysql_conn));
+        }
+    }
+
+    // Affichage des livres ajoutés
+    if (mysql_query(mysql_conn, "SELECT * FROM livres")) {
+        fprintf(stderr, "%s\n", mysql_error(mysql_conn));
+    }
+    result = mysql_store_result(mysql_conn);
+    while ((row = mysql_fetch_row(result))) {
+        printf("Livre ajouté : id=%s, titre=%s, auteur=%s, année=%s, disponible=%s\n",
+                row[0], row[1], row[2], row[3], row[4]);
+    }
+    mysql_free_result(result);
+}
+
+//Cette fonction prend en paramètres le tableau "livres", sa taille "nb_livres" et une connexion MySQL "mysql_conn". Elle insère chaque livre dans la table "livres" et affiche les livres ajoutés. Notez que cette fonction nécessite la bibliothèque MySQL : #include <mysql/mysql.h>.
+
+//Il est important de noter que cette fonction ne gère pas les erreurs de connexion à la base de données ou d'insertion de données. Il est donc important de prendre en compte ces cas d'erreur pour une utilisation en production.
+
