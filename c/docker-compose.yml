@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  # Exectute the following command to run the container
+  # dc run --rm app && docker exec -ti dev-c /bin/sh
+  app:
+    build: .
+    container_name: c-app
+    volumes:
+      - ./parking:/app
+    # command: sh
+    # command: sh -c "cd source && gcc -c *.c $$(mysql_config --libs) && gcc *.o && ./a.out"
+    command: sh -c "cd source && gcc *.c $$(mysql_config --libs) && ./a.out"
+
+  db:
+    image: mysql
+    container_name: c-db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - db-data:/var/lib/mysql
+      - "./parking/schema.sql:/docker-entrypoint-initdb.d/1.sql"
+
+volumes:
+  db-data:

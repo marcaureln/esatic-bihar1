@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <mysql/mysql.h>
 #include "../include/book.h"
 #include "../include/member.h"
 

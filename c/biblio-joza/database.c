@@ -31,7 +31,7 @@ void ajouter_adherents_mysql(adherent *adherents, int nb_adherents, MYSQL *con)
     MYSQL_RES *res;
     MYSQL_ROW row;
 
-    for (i = 0; i < &nb_adherents; i++)
+    for (i = 0; i < nb_adherents; i++)
     {
         sprintf(requete, "INSERT INTO adherents (nom, prenom, livre_emprunte) VALUES ('%s', '%s', '%s')", adherents[i].nom, adherents[i].prenom, adherents[i].livre_emprunte->titre);
 
