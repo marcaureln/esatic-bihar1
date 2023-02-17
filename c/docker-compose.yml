@@ -2,7 +2,8 @@ version: '3.9'
 
 services:
   # Exectute the following command to run the container
-  # dc run --rm app && docker exec -ti dev-c /bin/sh
+  # Start the containers if you haven't yet : docker compose up -d 
+  # docker compose run --rm app && docker exec -ti dev-c /bin/sh
   app:
     build: .
     container_name: c-app
