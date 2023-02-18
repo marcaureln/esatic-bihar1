@@ -7,7 +7,7 @@
 int main(int argc, char *argv[])
 {
     // Création d'un parking
-    Parking parking = creerParking(5, 10, 5);
+    Parking parking = creerParking(5, 2, 5);
 
     // Déclaration de la variable de choix pour le menu
     int choice;

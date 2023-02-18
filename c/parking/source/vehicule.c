@@ -12,5 +12,6 @@ Vehicule creerVehicule()
     scanf("%d", &pointeur->type);
     printf("Immatriculation (ex : 1234AB12) : ");
     scanf("%s", pointeur->immatriculation);
+    printf("\n");
     return vehicule;
 }

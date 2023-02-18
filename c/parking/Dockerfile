@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:22.04
 
 WORKDIR /app
 
@@ -11,8 +11,6 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     python-pip \
     libmysqlclient-dev
 
-COPY app .
+COPY . .
 
-RUN gcc -c *.c && gcc *.o -o app
-
-CMD ["./app"]
+CMD ["make", "build"]
