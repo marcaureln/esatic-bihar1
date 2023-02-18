@@ -2,23 +2,13 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <mysql/mysql.h>
-#include "../include/parking.h"
 #include "../include/vehicule.h"
 
 
-Parking creerParking(int nbPlacesMoto, int nbPlacesVoiture, int nbPlacesCamion)
+Vehicule creerVehicule(int type, char immatriculation[9], int parked_hours, int parked_minutes)
 {
-    Parking parking = {nbPlacesMoto, nbPlacesVoiture, nbPlacesCamion, "vehicule"};
-    return parking;
-}
-
-void afficherCapaciteParking(Parking *parking)
-{
-    // À faire : Récupérer les véhicules présent dans le parking via la base de données
-    printf("Capacité du parking :\n");
-    printf("Nombre de places pour moto : 0/%d\n", parking->nbPlacesMoto);
-    printf("Nombre de places pour voiture : 0/%d\n", parking->nbPlacesVoiture);
-    printf("Nombre de places pour camion : 0/%d\n", parking->nbPlacesCamion);
+    Vehicule vehicule = {type, immatriculation, parked_hours, parked_minutes};
+    return vehicule;
 }
 
 void afficherTarifs()
