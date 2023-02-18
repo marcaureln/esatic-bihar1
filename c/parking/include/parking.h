@@ -14,8 +14,8 @@ struct Parking
 };
 
 Parking creerParking(int, int, int);
-void afficherCapaciteParking(Parking *);
 void afficherTarifs();
+void afficherCapaciteParking(Parking *);
 void stationnerVehicule(Parking *, Vehicule *);
 void libererPlace(Parking *);
 

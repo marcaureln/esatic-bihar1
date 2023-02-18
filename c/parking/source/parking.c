@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
-#include <time.h>
 #include <string.h>
+#include <math.h>
 #include "../include/database.h"
 #include "../include/parking.h"
 #include "../include/vehicule.h"
@@ -13,30 +13,36 @@ Parking creerParking(int nbPlacesMoto, int nbPlacesVoiture, int nbPlacesCamion)
     return parking;
 }
 
+void afficherTarifs()
+{
+    printf("Tarifs :\n");
+    printf("Moto : 200 FCFA/h\n");
+    printf("Voiture : 500 FCFA/h\n");
+    printf("Camion : 1000 FCFA/h\n");
+}
+
 void afficherCapaciteParking(Parking *parking)
 {
     MYSQL *con = connectionBD();
-
+    MYSQL_RES *result;
+    MYSQL_ROW row;
     char requete[100];
 
-    snprintf(requete, sizeof(requete), "select type, count(*) from %s group by type order by type", parking->nomTable);
+    snprintf(requete, sizeof(requete), "SELECT type, COUNT(*) FROM %s GROUP BY type ORDER BY type", parking->nomTable);
 
     if (mysql_query(con, requete))
     {
         return erreurBD(con);
     }
 
-    MYSQL_RES *result = mysql_store_result(con);
+    result = mysql_store_result(con);
 
     if (result == NULL)
     {
         return erreurBD(con);
     }
 
-    MYSQL_ROW row;
-
-    // Respectivement : nbMoto, nbVoiture, nbCamion
-    int places[3] = {0, 0, 0};
+    int places[3] = {0, 0, 0}; // {nbMoto, nbVoiture, nbCamion}
     int i = 0;
 
     while ((row = mysql_fetch_row(result)))
@@ -58,40 +64,30 @@ void afficherCapaciteParking(Parking *parking)
     printf("Nombre de places pour camion : %d/%d (%.2f%%)\n", nbCamion, parking->nbPlacesCamion, (float)nbCamion / parking->nbPlacesCamion * 100);
 }
 
-void afficherTarifs()
-{
-    printf("Tarifs :\n");
-    printf("Moto : 200 FCFA/h\n");
-    printf("Voiture : 500 FCFA/h\n");
-    printf("Camion : 1000 FCFA/h\n");
-}
-
 void stationnerVehicule(Parking *parking, Vehicule *vehicule)
 {
     printf("Vérification des places disponibles...\n");
 
     MYSQL *con = connectionBD();
-
+    MYSQL_RES *result;
+    MYSQL_ROW row;
     char requete[100];
 
-    snprintf(requete, sizeof(requete), "select type, count(*) from %s group by type order by type", parking->nomTable);
+    snprintf(requete, sizeof(requete), "SELECT type, COUNT(*) FROM %s GROUP BY type ORDER BY type", parking->nomTable);
 
     if (mysql_query(con, requete))
     {
         return erreurBD(con);
     }
 
-    MYSQL_RES *result = mysql_store_result(con);
+    result = mysql_store_result(con);
 
     if (result == NULL)
     {
         return erreurBD(con);
     }
 
-    MYSQL_ROW row;
-
-    // Respectivement : nbMoto, nbVoiture, nbCamion
-    int places[3] = {0, 0, 0};
+    int places[3] = {0, 0, 0}; // {nbMoto, nbVoiture, nbCamion}
     int i = 0;
 
     while ((row = mysql_fetch_row(result)))
@@ -101,7 +97,6 @@ void stationnerVehicule(Parking *parking, Vehicule *vehicule)
     }
 
     mysql_free_result(result);
-    mysql_close(con);
 
     // Vérifier si le type de véhicule est valide
     if (vehicule->type < 1 || vehicule->type > 3)
@@ -130,11 +125,7 @@ void stationnerVehicule(Parking *parking, Vehicule *vehicule)
 
     printf("Stationnement du véhicule immatriculé %s...\n", vehicule->immatriculation);
 
-    con = connectionBD();
-
-    requete[100];
-
-    snprintf(requete, sizeof(requete), "insert into `%s` (`immatriculation`, `type`) values ('%s', %d)", parking->nomTable, vehicule->immatriculation, vehicule->type);
+    snprintf(requete, sizeof(requete), "INSERT INTO `%s` (`immatriculation`, `type`) VALUES ('%s', %d)", parking->nomTable, vehicule->immatriculation, vehicule->type);
 
     if (mysql_query(con, requete))
     {
@@ -149,26 +140,24 @@ void stationnerVehicule(Parking *parking, Vehicule *vehicule)
 void libererPlace(Parking *parking)
 {
     MYSQL *con = connectionBD();
+    MYSQL_RES *result;
+    MYSQL_ROW row;
+    char requete[120];
 
-    char requete[100];
-
-    snprintf(requete, sizeof(requete), "select * from %s", parking->nomTable);
+    // Lister les véhicules stationnés
+    snprintf(requete, sizeof(requete), "SELECT * FROM %s", parking->nomTable);
 
     if (mysql_query(con, requete))
     {
         return erreurBD(con);
     }
 
-    MYSQL_RES *result = mysql_store_result(con);
+    result = mysql_store_result(con);
 
     if (result == NULL)
     {
         return erreurBD(con);
     }
-
-    int num_fields = mysql_num_fields(result);
-
-    MYSQL_ROW row;
 
     printf("Véhicules stationnés :\n\n");
     printf(" ------------------------------------------- \n");
@@ -179,7 +168,7 @@ void libererPlace(Parking *parking)
     {
         printf("| ");
 
-        for (int i = 0; i < num_fields; i++)
+        for (int i = 0; i < mysql_num_fields(result); i++)
         {
             printf("%s | ", row[i] ? row[i] : "NULL");
         }
@@ -192,7 +181,6 @@ void libererPlace(Parking *parking)
     mysql_free_result(result);
 
     // Récupérer l'ID du véhicule à retirer du parking
-
     int idVehicule;
 
     printf("Veuillez entrer l'ID du véhicule à rétirer du parking (0 : pour annuler) : ");
@@ -204,8 +192,7 @@ void libererPlace(Parking *parking)
     }
 
     // Calculer le temps total passé dans le parking et retourner la facture
-
-    snprintf(requete, sizeof(requete), "select type, heureArrivee from %s where id=%d", parking->nomTable, idVehicule);
+    snprintf(requete, sizeof(requete), "SELECT type, heureArrivee, now(), TIMESTAMPDIFF(SECOND, heureArrivee, now()) FROM %s WHERE id=%d", parking->nomTable, idVehicule);
 
     if (mysql_query(con, requete))
     {
@@ -220,12 +207,16 @@ void libererPlace(Parking *parking)
     }
 
     int typeVehicule;
+    int tempsPasse;
     char *heureArrivee;
+    char *heureSortie;
 
     if (row = mysql_fetch_row(result))
     {
         typeVehicule = row[0] ? atoi(row[0]) : 0;
         heureArrivee = row[1] ? row[1] : NULL;
+        heureSortie = row[2] ? row[2] : NULL;
+        tempsPasse = row[3] ? atoi(row[3]) : 0;
     }
 
     mysql_free_result(result);
@@ -236,28 +227,36 @@ void libererPlace(Parking *parking)
         return;
     }
 
-    // snprintf(requete, sizeof(requete), "delete from `%s` where id = %d", parking->nomTable, idVehicule);
+    int montant;
+    tempsPasse = ceil((float)tempsPasse / 3600);
 
-    // if (mysql_query(con, requete))
-    // {
-    //     return erreurBD(con);
-    // }
+    switch (typeVehicule)
+    {
+    case 1:
+        montant = tempsPasse * 200;
+        break;
+    case 2:
+        montant = tempsPasse * 500;
+        break;
+    case 3:
+        montant = tempsPasse * 1000;
+        break;
+    }
 
-    time_t maintenant = time(NULL);
-    char heureSortie[20];
-    strftime(heureSortie, 20, "%Y-%m-%d %H:%M:%S", localtime(&maintenant));
-
-    struct tm tm;
-    strptime(heureArrivee, "%Y-%m-%d %H:%M:%S", &tm);
-
-    char buf[255];
-    strftime(buf, sizeof(buf), "%d %b %Y %H:%M", &tm);
-    puts(buf);
-
-    // printf("Heure d'arrivée : %s\n", ctime(&tm));
+    printf("\nFacture :\n");
+    printf("Heure d'arrivée : %s\n", heureArrivee);
     printf("Heure de sortie : %s\n", heureSortie);
+    printf("Temps passé : %d heure(s)\n", tempsPasse);
     printf("Type de véhicule : %s\n", typeVehicule == 1 ? "Moto" : (typeVehicule == 2 ? "Voiture" : "Camion"));
-    printf("À payer : 0 F CFA\n");
+    printf("À payer : %d F CFA\n", montant);
+
+    // Rétirer le véhicule du parking
+    snprintf(requete, sizeof(requete), "DELETE FROM `%s` WHERE id = %d", parking->nomTable, idVehicule);
+
+    if (mysql_query(con, requete))
+    {
+        return erreurBD(con);
+    }
 
     mysql_close(con);
 }
