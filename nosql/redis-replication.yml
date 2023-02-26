@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  redis-master:
+    image: redis:7
+    container_name: redis-master
+    command: redis-server /etc/redis/master.conf
+    # redis-cli : docker run -it --rm --network redis-net redis redis-cli -h redis-master
+    expose:
+      - '6379'
+    volumes:
+      - ./redis:/etc/redis
+      - redis-master-data:/data
+
+  redis-replica:
+    image: redis:7
+    container_name: redis-replica
+    command: redis-server /etc/redis/slave.conf
+    # redis-cli : docker run -it --rm --network redis-net redis redis-cli -h redis-replica
+    expose:
+      - '6379'
+    depends_on:
+      - redis-master
+    volumes:
+      - ./redis:/etc/redis
+      - redis-replica-data:/data
+
+networks:
+  default:
+    name: redis-net
+
+volumes:
+  redis-master-data:
+  redis-replica-data:
