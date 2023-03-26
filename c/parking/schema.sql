@@ -1,7 +1,5 @@
 CREATE DATABASE IF NOT EXISTS parking;
-
-CREATE TABLE IF NOT EXISTS parking.vehicule
-(
+CREATE TABLE IF NOT EXISTS parking.vehicule (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     immatriculation VARCHAR(8),
     type tinyint,
