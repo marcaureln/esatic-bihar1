@@ -12,7 +12,9 @@ Chaque projet est organisé dans un dossier portant le nom du cours auquel il es
 - `compression` : Techniques de compression
 - `graphe` : Théorie des graphes
 - `java` : UML et JAVA
+- `linux` : Programmation système et concurrence
 - `middleware` : Middleware
+- `nosql` : NoSQL
 - `optimisation` : Méthodes d'optimisation
 
 ## Contributeurs
