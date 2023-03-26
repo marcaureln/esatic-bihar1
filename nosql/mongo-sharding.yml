@@ -1,0 +1,96 @@
+version: '3.9'
+
+services:
+  ## Étape 1 : Configurer serveurs de configuration
+  config_node1:
+    image: mongo
+    command: mongod --configsvr --replSet my-config-replica-set --bind_ip_all
+    volumes:
+      - ./mongo/config-node1-data:/data
+
+  config_node2:
+    image: mongo
+    command: mongod --configsvr --replSet my-config-replica-set --bind_ip_all
+    volumes:
+      - ./mongo/config-node2-data:/data
+
+  config_node_init:
+    image: mongo
+    restart: 'no'
+    depends_on:
+      - config_node1
+      - config_node2
+    command: >
+      mongosh --host config_node1:27017 --eval
+      '
+      rs.initiate({
+      "_id" : "my-config-replica-set",
+      "members" : [
+        { "_id" : 0, "host" : "config_node1:27017" },
+        { "_id" : 1, "host" : "config_node2:27017" },
+      ]
+      });
+      '
+
+  ## Étape 2 : Configurer les serveurs de sharding
+  shard_node1:
+    image: mongo
+    command: --shardsvr --replSet my-shard-replica-set --bind_ip_all
+    ports:
+      - '27001:27017'
+    restart: always
+    volumes:
+      - ./mongo/node1-data:/data/db
+
+  shard_node2:
+    image: mongo
+    command: --shardsvr --replSet my-shard-replica-set --bind_ip_all
+    ports:
+      - '27002:27017'
+    restart: always
+    volumes:
+      - ./mongo/node2-data:/data/db
+
+  shard_node_init:
+    image: mongo
+    restart: 'no'
+    depends_on:
+      - shard_node1
+      - shard_node2
+    command: >
+      mongosh --host shard_node1:27017 --eval
+      '
+      rs.initiate({
+      "_id" : "my-shard-replica-set",
+      "members" : [
+        { "_id" : 0, "host" : "node1:27017" },
+        { "_id" : 1, "host" : "node2:27017" },
+      ]
+      });
+      '
+
+  ## Étape 3 : Démarrer le routeur Mongos
+  mongos:
+    image: mongo
+    depends_on:
+      - shard_node1
+      - shard_node2
+    command: mongos --configdb my-shard-replica-set/shard_node1:27019,shard_node2:27019 --bind_ip_all
+
+  mongos_init:
+    image: mongo
+    restart: 'no'
+    depends_on:
+      - shard_node1
+      - shard_node2
+      - mongos
+    command: >
+      mongosh --host mongos:27017 --eval
+      '
+      sh.addShard("my-shard-replica-set/shard_node1:27019,shard_node2:27019")
+      sh.enableSharding("bihar")
+      '
+
+networks:
+  default:
+    name: mongo-net

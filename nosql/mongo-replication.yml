@@ -1,0 +1,71 @@
+version: '3.9'
+
+services:
+  node1:
+    # Command to launch mongosh :
+    # docker run -it --network mongo-net --rm mongo mongosh --host mongo root
+    image: mongo
+    container_name: mongo-node1
+    command: --replSet my-replica-set
+    ports:
+      - '27001:27017'
+    restart: always
+    volumes:
+      - ./mongo/node1-data:/data/db
+
+  node2:
+    image: mongo
+    container_name: mongo-node2
+    command: --replSet my-replica-set
+    ports:
+      - '27002:27017'
+    restart: always
+    volumes:
+      - ./mongo/node2-data:/data/db
+
+  node3:
+    image: mongo
+    container_name: mongo-node3
+    command: --replSet my-replica-set
+    ports:
+      - '27003:27017'
+    restart: always
+    volumes:
+      - ./mongo/node3-data:/data/db
+
+  mongoinit:
+    image: mongo
+    container_name: mongo-init
+    # this container will exit after executing the command
+    restart: 'no'
+    depends_on:
+      - node1
+      - node2
+      - node3
+    command: >
+      mongosh --host node1:27017 --eval 
+      '
+      db = (new Mongo("node1:27017")).getDB("test");
+      config = {
+      "_id" : "my-replica-set",
+      "members" : [
+        {
+          "_id" : 0,
+          "host" : "node1:27017"
+        },
+        {
+          "_id" : 1,
+          "host" : "node2:27017"
+        },
+        {
+          "_id" : 2,
+          "host" : "node3:27017"
+        }
+      ]
+      };
+      rs.initiate(config);
+      '
+
+networks:
+  default:
+    name: mongo-net
