@@ -11,7 +11,7 @@ struct Evenement
     int id;
     char titre[256];
     int nbPlaces;
-    int typeId;
+    int idType;
 };
 
 struct TypeEvenement
@@ -20,7 +20,6 @@ struct TypeEvenement
     char libelle[256];
 };
 
-Evenement creerEvenementNull();
 Evenement creerEvenement(BD *);
 Evenement recupererEvenement(BD *, int);
 void afficherTypeEvenement(BD *);

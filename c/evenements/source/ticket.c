@@ -4,11 +4,11 @@
 #include "../include/database.h"
 #include "../include/ticket.h"
 
-void vendreTicket(BD *bd, int seanceId)
+void vendreTicket(BD *bd, int idSeance)
 {
     Ticket ticket;
     Ticket *p_ticket = &ticket;
-    p_ticket->seanceId = seanceId;
+    p_ticket->idSeance = idSeance;
 
     printf("\nEnregistrement de la vente en cours...\n");
 
@@ -22,8 +22,8 @@ void vendreTicket(BD *bd, int seanceId)
 
     char requete[128];
 
-    // Insertion de la vente dans la base de données
-    if (0 > snprintf(requete, sizeof(requete), "INSERT INTO evenements.ticket(`seanceId`) VALUES (%d)", p_ticket->seanceId))
+    // Insertion de la vente dans la base de données.
+    if (0 > snprintf(requete, sizeof(requete), "INSERT INTO evenements.ticket(`idSeance`) VALUES (%d)", p_ticket->idSeance))
     {
         printf("Erreur lors du formatage de la requête !\n");
     }

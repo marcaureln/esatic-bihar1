@@ -10,7 +10,7 @@ struct Menu
 {
     int id;
     char titre[256];
-    int evenementId;
+    int idEvenement;
 };
 
 struct Plat
@@ -18,7 +18,7 @@ struct Plat
     int id;
     char nom[256];
     int prix;
-    int menuId;
+    int idMenu;
 };
 
 void ajouterPlat(BD *, int);

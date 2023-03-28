@@ -15,7 +15,7 @@ build:
 	@echo ""
 
 run:
-	@$(BUILD_DIR)/$(APP_NAME) 172.18.0.2 root example evenements
+	@$(BUILD_DIR)/$(APP_NAME) 172.18.0.2 root example evenements ignorer-initialisation
 
 clean:
 	@rm -rf ./*/*.o

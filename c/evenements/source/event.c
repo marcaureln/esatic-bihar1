@@ -6,15 +6,10 @@
 #include "../include/event.h"
 #include "../include/database.h"
 
-Evenement creerEvenementNull()
-{
-    Evenement evenement = {0, "", 0, 0};
-    return evenement;
-}
-
+// Fonction de création et d'insertion d'un évènement dans la base de données.
 Evenement creerEvenement(BD *bd)
 {
-    Evenement evenement;
+    Evenement evenement = {0, "", 0, 0};
     Evenement *p_evenement = &evenement;
     printf("Nom de l'évènement : ");
     lire(p_evenement->titre, 256);
@@ -23,7 +18,7 @@ Evenement creerEvenement(BD *bd)
     printf("> ");
     char saisieType[2];
     lire(saisieType, sizeof(saisieType));
-    p_evenement->typeId = atoi(saisieType);
+    p_evenement->idType = atoi(saisieType);
     printf("Nombre de places : ");
     char saisiePlaces[sizeof(int)];
     lire(saisiePlaces, sizeof(saisiePlaces));
@@ -36,13 +31,13 @@ Evenement creerEvenement(BD *bd)
     if (con == NULL)
     {
         printf("Erreur lors de la création de l'évènement !\n");
-        return creerEvenementNull();
+        return evenement;
     }
 
     char requete[384];
 
-    // Insertion de l'évènement dans la base de données
-    if (0 > snprintf(requete, sizeof(requete), "INSERT INTO evenements.evenement(`titre`, `nbPlaces`, `typeId`) VALUES (\"%s\", %d, %d)", p_evenement->titre, p_evenement->nbPlaces, p_evenement->typeId))
+    // Insertion de l'évènement dans la base de données. La requête est formatée avec les données saisies par l'utilisateur.
+    if (0 > snprintf(requete, sizeof(requete), "INSERT INTO evenements.evenement(`titre`, `nbPlaces`, `idType`) VALUES (\"%s\", %d, %d)", p_evenement->titre, p_evenement->nbPlaces, p_evenement->idType))
     {
         printf("Erreur lors du formatage de la requête !\n");
     }
@@ -57,8 +52,8 @@ Evenement creerEvenement(BD *bd)
         {
             printf("L'évènement a bien été créé !\n");
 
-            // Insertion du menu de l'évènement dans la base de données
-            if (0 < snprintf(requete, sizeof(requete), "INSERT INTO evenements.menu(`titre`, `evenementId`) VALUES (\"Menu %s\", %d)", p_evenement->titre, mysql_insert_id(con)))
+            // Insertion du menu de l'évènement dans la base de données.
+            if (0 < snprintf(requete, sizeof(requete), "INSERT INTO evenements.menu(`titre`, `idEvenement`) VALUES (\"Menu %s\", %d)", p_evenement->titre, mysql_insert_id(con)))
             {
                 if (mysql_query(con, requete))
                 {
@@ -74,17 +69,18 @@ Evenement creerEvenement(BD *bd)
     return evenement;
 }
 
+// Fonction de récupération d'un évènement depuis la base de données via son id.
 Evenement recupererEvenement(BD *bd, int id)
 {
-    Evenement evenement;
+    Evenement evenement = {0, "", 0, 0};
     Evenement *p_evenement = &evenement;
 
     char requete[128];
 
-    if (0 > snprintf(requete, sizeof(requete), "SELECT titre, nbPlaces, typeId FROM evenements.evenement WHERE id = %d", id))
+    if (0 > snprintf(requete, sizeof(requete), "SELECT titre, nbPlaces, idType FROM evenements.evenement WHERE id = %d", id))
     {
         printf("Erreur lors du formatage de la requête !\n");
-        return creerEvenementNull();
+        return evenement;
     }
 
     MYSQL *con = connectionBD(bd->hote, bd->utilisateur, bd->mdp, bd->nom);
@@ -92,14 +88,14 @@ Evenement recupererEvenement(BD *bd, int id)
     if (con == NULL)
     {
         printf("Erreur lors de la connection à la base de données !\n");
-        return creerEvenementNull();
+        return evenement;
     }
 
     if (mysql_query(con, requete))
     {
         printf("Erreur lors de la récupération de l'évènement !\n");
         erreurBD(con);
-        return creerEvenementNull();
+        return evenement;
     }
     else
     {
@@ -118,7 +114,7 @@ Evenement recupererEvenement(BD *bd, int id)
                 p_evenement->id = id;
                 strcpy(p_evenement->titre, row[0]);
                 p_evenement->nbPlaces = atoi(row[1]);
-                p_evenement->typeId = atoi(row[2]);
+                p_evenement->idType = atoi(row[2]);
             }
         }
 
@@ -130,7 +126,7 @@ Evenement recupererEvenement(BD *bd, int id)
     return evenement;
 }
 
-// Affiche la liste des évènements enregistrés dans la base de données et retourne le nombre total d'évènements
+// Affiche la liste des évènements enregistrés dans la base de données et retourne l'id dernier évènement.
 int afficherEvenements(BD *bd)
 {
     MYSQL *con = connectionBD(bd->hote, bd->utilisateur, bd->mdp, bd->nom);
@@ -141,7 +137,7 @@ int afficherEvenements(BD *bd)
         return 0;
     }
 
-    if (mysql_query(con, "SELECT evenements.evenement.id, titre, libelle FROM evenements.evenement, evenements.typeEvenement WHERE evenements.evenement.typeId = evenements.typeEvenement.id"))
+    if (mysql_query(con, "SELECT evenements.evenement.id, titre, libelle FROM evenements.evenement, evenements.typeEvenement WHERE evenements.evenement.idType = evenements.typeEvenement.id"))
     {
         erreurBD(con);
     }
@@ -153,22 +149,23 @@ int afficherEvenements(BD *bd)
         erreurBD(con);
     }
 
-    int count = 0;
+    int id = 0;
 
     MYSQL_ROW row;
 
     while ((row = mysql_fetch_row(result)))
     {
-        count++;
+        id = atoi(row[0]);
         printf("%s. %s (%s)\n", row[0], row[1], row[2]);
     }
 
     mysql_free_result(result);
     mysql_close(con);
 
-    return count;
+    return id;
 }
 
+// Affiche la liste des types d'évènements disponible dans la base de données.
 void afficherTypeEvenement(BD *bd)
 {
     MYSQL *con = connectionBD(bd->hote, bd->utilisateur, bd->mdp, bd->nom);

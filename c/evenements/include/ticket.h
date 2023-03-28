@@ -8,7 +8,7 @@ typedef struct Ticket Ticket;
 struct Ticket
 {
     int id;
-    int seanceId;
+    int idSeance;
 };
 
 void vendreTicket(BD *, int);

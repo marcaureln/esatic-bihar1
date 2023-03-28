@@ -9,7 +9,7 @@ struct Seance
 {
     int id;
     char date[11]; // Format : JJ/MM/AAAA
-    int evenementId;
+    int idEvenement;
 };
 
 void afficherProgramme(BD *, int);

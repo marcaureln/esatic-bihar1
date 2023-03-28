@@ -7,21 +7,19 @@
 #include "../include/schedule.h"
 #include "../include/event.h"
 
-void afficherProgramme(BD *bd, int evenementId)
+void afficherProgramme(BD *bd, int idEvenement)
 {
-    Evenement evenement = recupererEvenement(bd, evenementId);
+    Evenement evenement = recupererEvenement(bd, idEvenement);
 
     MYSQL *con = connectionBD(bd->hote, bd->utilisateur, bd->mdp, bd->nom);
 
     char requete[256];
 
-    if (0 > snprintf(requete, sizeof(requete), "SELECT seance.id, DATE_FORMAT(date, '%%d/%%m/%%Y'), COUNT(ticket.id) FROM seance LEFT OUTER JOIN ticket ON ticket.seanceId = seance.id WHERE evenementId = %d GROUP BY seance.id", evenementId))
+    if (0 > snprintf(requete, sizeof(requete), "SELECT seance.id, DATE_FORMAT(date, '%%d/%%m/%%Y'), COUNT(ticket.id) FROM seance LEFT OUTER JOIN ticket ON ticket.idSeance = seance.id WHERE idEvenement = %d GROUP BY seance.id", idEvenement))
     {
         printf("Erreur lors du formatage de la requête !\n");
         return;
     }
-
-    printf("%s\n", requete);
 
     // S'assurer que la connection à la base de données s'est bien exécutée
     if (con == NULL)
@@ -59,11 +57,11 @@ void afficherProgramme(BD *bd, int evenementId)
     }
 }
 
-void ajouterSeance(BD *bd, int evenementId)
+void ajouterSeance(BD *bd, int idEvenement)
 {
     Seance seance;
     Seance *p_seance = &seance;
-    p_seance->evenementId = evenementId;
+    p_seance->idEvenement = idEvenement;
     printf("Ajout d'une séance au programme\n");
     printf("Date (JJ/MM/AAAA) : ");
     lire(p_seance->date, sizeof(p_seance->date));
@@ -81,7 +79,7 @@ void ajouterSeance(BD *bd, int evenementId)
     char requete[128];
 
     // Insertion de la séance dans la base de données
-    if (0 > snprintf(requete, sizeof(requete), "INSERT INTO evenements.seance(`date`, `evenementId`) VALUES (STR_TO_DATE('%s', '%%d/%%m/%%Y'), %d)", p_seance->date, p_seance->evenementId))
+    if (0 > snprintf(requete, sizeof(requete), "INSERT INTO evenements.seance(`date`, `idEvenement`) VALUES (STR_TO_DATE('%s', '%%d/%%m/%%Y'), %d)", p_seance->date, p_seance->idEvenement))
     {
         printf("Erreur lors du formatage de la requête !\n");
     }

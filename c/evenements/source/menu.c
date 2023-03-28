@@ -6,11 +6,11 @@
 #include "../include/utils.h"
 #include "../include/database.h"
 
-void ajouterPlat(BD *bd, int menuId)
+void ajouterPlat(BD *bd, int idMenu)
 {
     Plat plat;
     Plat *p_plat = &plat;
-    p_plat->menuId = menuId;
+    p_plat->idMenu = idMenu;
     printf("Ajout d'un plat au menu\n");
     printf("Nom : ");
     lire(p_plat->nom, 256);
@@ -32,7 +32,7 @@ void ajouterPlat(BD *bd, int menuId)
     char requete[384];
 
     // Insertion du plat dans la base de données
-    if (0 > snprintf(requete, sizeof(requete), "INSERT INTO evenements.plat(`nom`, `prix`, `menuId`) VALUES (\"%s\", %d, %d)", p_plat->nom, p_plat->prix, p_plat->menuId))
+    if (0 > snprintf(requete, sizeof(requete), "INSERT INTO evenements.plat(`nom`, `prix`, `idMenu`) VALUES (\"%s\", %d, %d)", p_plat->nom, p_plat->prix, p_plat->idMenu))
     {
         printf("Erreur lors du formatage de la requête !\n");
     }
@@ -52,13 +52,13 @@ void ajouterPlat(BD *bd, int menuId)
     mysql_close(con);
 }
 
-void afficherPlats(BD *bd, int menuId)
+void afficherPlats(BD *bd, int idMenu)
 {
     MYSQL *con = connectionBD(bd->hote, bd->utilisateur, bd->mdp, bd->nom);
 
     char requete[128];
 
-    if (0 > snprintf(requete, sizeof(requete), "SELECT nom, prix FROM evenements.plat WHERE menuId = %d", menuId))
+    if (0 > snprintf(requete, sizeof(requete), "SELECT nom, prix FROM evenements.plat WHERE idMenu = %d", idMenu))
     {
         printf("Erreur lors du formatage de la requête !\n");
         return;
@@ -98,16 +98,16 @@ void afficherPlats(BD *bd, int menuId)
     }
 }
 
-Menu recupererMenu(BD *bd, int evenementId)
+Menu recupererMenu(BD *bd, int idEvenement)
 {
-    Menu menu = {0, "", evenementId};
+    Menu menu = {0, "", idEvenement};
     Menu *p_menu = &menu;
 
     MYSQL *con = connectionBD(bd->hote, bd->utilisateur, bd->mdp, bd->nom);
 
     char requete[128];
 
-    if (0 > snprintf(requete, sizeof(requete), "SELECT id, titre FROM evenements.menu WHERE evenementId = %d", evenementId))
+    if (0 > snprintf(requete, sizeof(requete), "SELECT id, titre FROM evenements.menu WHERE idEvenement = %d", idEvenement))
     {
         printf("Erreur lors du formatage de la requête !\n");
         return menu;
@@ -150,13 +150,13 @@ Menu recupererMenu(BD *bd, int evenementId)
     return menu;
 }
 
-void afficherMenu(BD *bd, int evenementId)
+void afficherMenu(BD *bd, int idEvenement)
 {
     MYSQL *con = connectionBD(bd->hote, bd->utilisateur, bd->mdp, bd->nom);
 
     char requete[128];
 
-    if (0 > snprintf(requete, sizeof(requete), "SELECT id, titre FROM evenements.menu WHERE evenementId = %d", evenementId))
+    if (0 > snprintf(requete, sizeof(requete), "SELECT id, titre FROM evenements.menu WHERE idEvenement = %d", idEvenement))
     {
         printf("Erreur lors du formatage de la requête !\n");
         return;
