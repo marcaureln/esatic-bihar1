@@ -7,6 +7,9 @@
 #include "../include/schedule.h"
 #include "../include/event.h"
 
+/// @brief Affiche le programme d'un événement.
+/// @param bd
+/// @param idEvenement
 void afficherProgramme(BD *bd, int idEvenement)
 {
     Evenement evenement = recupererEvenement(bd, idEvenement);
@@ -57,6 +60,9 @@ void afficherProgramme(BD *bd, int idEvenement)
     }
 }
 
+/// @brief Ajoute une séance au programme d'un événement.
+/// @param bd
+/// @param idEvenement
 void ajouterSeance(BD *bd, int idEvenement)
 {
     Seance seance;

@@ -6,7 +6,9 @@
 #include "../include/event.h"
 #include "../include/database.h"
 
-// Fonction de création et d'insertion d'un évènement dans la base de données.
+/// @brief Créer un évènement.
+/// @param bd
+/// @return Evenement
 Evenement creerEvenement(BD *bd)
 {
     Evenement evenement = {0, "", 0, 0};
@@ -69,7 +71,10 @@ Evenement creerEvenement(BD *bd)
     return evenement;
 }
 
-// Fonction de récupération d'un évènement depuis la base de données via son id.
+/// @brief Récupère un évènement dans la base de données.
+/// @param bd
+/// @param id
+/// @return Evenement
 Evenement recupererEvenement(BD *bd, int id)
 {
     Evenement evenement = {0, "", 0, 0};
@@ -126,7 +131,9 @@ Evenement recupererEvenement(BD *bd, int id)
     return evenement;
 }
 
-// Affiche la liste des évènements enregistrés dans la base de données et retourne l'id dernier évènement.
+/// @brief Affiche les évènements enregistrés dans la base de données.
+/// @param bd
+/// @return int
 int afficherEvenements(BD *bd)
 {
     MYSQL *con = connectionBD(bd->hote, bd->utilisateur, bd->mdp, bd->nom);
@@ -165,7 +172,8 @@ int afficherEvenements(BD *bd)
     return id;
 }
 
-// Affiche la liste des types d'évènements disponible dans la base de données.
+/// @brief Affiche les types d'évènements enregistrés dans la base de données.
+/// @param bd
 void afficherTypeEvenement(BD *bd)
 {
     MYSQL *con = connectionBD(bd->hote, bd->utilisateur, bd->mdp, bd->nom);

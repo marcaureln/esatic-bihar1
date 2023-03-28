@@ -4,7 +4,9 @@
 #include <mysql/mysql.h>
 #include "../include/database.h"
 
-// Fonction d'initialisation de la base de données.
+/// @brief Initialise la base de données.
+/// @param bd
+/// @return bool
 bool initBD(BD *bd)
 {
     // Requêtes de création de la base de données et des tables nécessaires au programme.
@@ -46,7 +48,12 @@ bool initBD(BD *bd)
     return true;
 }
 
-// Fonction de connection à la base de données.
+/// @brief Crée une connection à la base de données.
+/// @param hote
+/// @param utilisateur
+/// @param mdp
+/// @param nom
+/// @return MYSQL
 MYSQL *connectionBD(char *hote, char *utilisateur, char *mdp, char *nom)
 {
     // Initialisation de l'objet MYSQL.
@@ -69,7 +76,8 @@ MYSQL *connectionBD(char *hote, char *utilisateur, char *mdp, char *nom)
     return con;
 }
 
-// Fonction d'affichage des erreurs liées à la base de données.
+/// @brief Affiche les erreurs liées à la base de données.
+/// @param con
 void erreurBD(MYSQL *con)
 {
     fprintf(stderr, "Une erreur s'est produite lors de l'interaction avec la base de données. Erreur : %s\n", mysql_error(con));

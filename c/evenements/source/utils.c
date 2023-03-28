@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-// Vide le buffer si l'utilisateur a saisi plus de caractères que prévu.
+/// @brief Vide le buffer si l'utilisateur a saisi plus de caractères que prévu.
 void viderBuffer()
 {
     int c = 0;
@@ -13,7 +13,10 @@ void viderBuffer()
     }
 }
 
-// Lire de manière sécurisée la saisie de l'utilisateur.
+/// @brief Lire de manière sécurisée la saisie de l'utilisateur.
+/// @param chaine
+/// @param longueur
+/// @return bool
 bool lire(char *chaine, int longueur)
 {
     char *positionEntree = NULL;

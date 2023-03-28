@@ -7,6 +7,7 @@
 #include "../include/schedule.h"
 #include "../include/ticket.h"
 #include "../include/utils.h"
+#include "../include/embedded.h"
 
 int main(int argc, char *argv[])
 {
@@ -59,6 +60,7 @@ int main(int argc, char *argv[])
         printf("\nVeuillez choisir un évènement dans la liste :\n");
         int idDernierEvenement = afficherEvenements(&bd);
         printf("a. Ajouter un évènement\n");
+        // printf("s. Voir statistiques\n");
         printf("q. Quitter\n");
         printf("> ");
         lire(saisie, sizeof(saisie));
@@ -68,6 +70,13 @@ int main(int argc, char *argv[])
         {
             printf("\nAjout d'un évènement\n");
             creerEvenement(&bd);
+            continue;
+        }
+        // Si l'utilisateur a saisi "s", on exécute le script Python.
+        else if (saisie[0] == 's')
+        {
+            printf("\nStatistiques\n");
+            executerCodePython("script/stats.py");
             continue;
         }
         // Si l'utilisateur a saisi "q", on quitte le programme, sinon on convertit la saisie en entier.

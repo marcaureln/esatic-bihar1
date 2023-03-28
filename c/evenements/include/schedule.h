@@ -8,7 +8,7 @@ typedef struct Seance Seance;
 struct Seance
 {
     int id;
-    char date[11]; // Format : JJ/MM/AAAA
+    char date[11]; /// Format : JJ/MM/AAAA
     int idEvenement;
 };
 

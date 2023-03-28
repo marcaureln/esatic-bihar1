@@ -4,6 +4,9 @@
 #include "../include/database.h"
 #include "../include/ticket.h"
 
+/// @brief Insere un ticket dans la base de données.
+/// @param bd
+/// @param idSeance
 void vendreTicket(BD *bd, int idSeance)
 {
     Ticket ticket;

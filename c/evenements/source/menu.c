@@ -6,6 +6,9 @@
 #include "../include/utils.h"
 #include "../include/database.h"
 
+/// @brief Ajoute un plat au menu.
+/// @param bd
+/// @param idMenu
 void ajouterPlat(BD *bd, int idMenu)
 {
     Plat plat;
@@ -52,6 +55,9 @@ void ajouterPlat(BD *bd, int idMenu)
     mysql_close(con);
 }
 
+/// @brief Affiche les plats d'un menu.
+/// @param bd
+/// @param idMenu
 void afficherPlats(BD *bd, int idMenu)
 {
     MYSQL *con = connectionBD(bd->hote, bd->utilisateur, bd->mdp, bd->nom);
@@ -98,6 +104,10 @@ void afficherPlats(BD *bd, int idMenu)
     }
 }
 
+/// @brief Réccupère le menu d'un évènement.
+/// @param bd
+/// @param idEvenement
+/// @return Menu
 Menu recupererMenu(BD *bd, int idEvenement)
 {
     Menu menu = {0, "", idEvenement};
@@ -150,6 +160,9 @@ Menu recupererMenu(BD *bd, int idEvenement)
     return menu;
 }
 
+/// @brief Affiche le menu d'un évènement.
+/// @param bd
+/// @param idEvenement
 void afficherMenu(BD *bd, int idEvenement)
 {
     MYSQL *con = connectionBD(bd->hote, bd->utilisateur, bd->mdp, bd->nom);
