@@ -17,13 +17,6 @@ Chaque projet est organisé dans un dossier portant le nom du cours auquel il es
 - `nosql` : NoSQL
 - `optimisation` : Méthodes d'optimisation
 
-## Contributeurs
-
-Merci à tous ceux qui ont contribué sur ce dépôt :
-
-- [menoutep](https://github.com/menoutep)
-- [iAbdelRahim](https://github.com/iAbdelRahim)
-
 ## Contribuer
 
 Il faut noter que certains projets ne sont pas encore terminés, voire même pas entièrement fonctionnels. Ainsi, toutes les contributions sont les bienvenues, même les plus modestes, car elles peuvent aider à faire avancer ces projets et à les rendre plus utiles pour la communauté.
